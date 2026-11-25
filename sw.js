@@ -1,8 +1,8 @@
 // Guarda os arquivos do app para abrir rápido e funcionar com internet fraca.
 // As respostas (Planilha Google) nunca passam pelo cache.
-const VERSAO = "tertulias-v2";
+const VERSAO = "tertulias-v3";
 const ARQUIVOS = ["./", "index.html", "config.js", "manifest.webmanifest",
-  "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/logo-white.png", "icons/favicon.png"];
+  "icon-192.png", "icon-512.png", "apple-touch-icon.png", "logo-white.png", "favicon.png"];
 
 self.addEventListener("install", (e) => {
   // guarda um por um: se algum arquivo faltar, o app continua instalável
