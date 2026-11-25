@@ -6,6 +6,7 @@
 <title>Tertúlias · Presença</title>
 <meta name="description" content="Registre sua presença nas tertúlias de quinta-feira.">
 <meta name="theme-color" content="#12326E">
+<meta name="color-scheme" content="only light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,16 +25,12 @@
   --ok:#1E7A4C; --ok-soft:#DFF1E7; --miss:#C0392B; --miss-soft:#F8E1DE; --just:#9A6A00; --just-soft:#FFF1CC;
   --today-soft:#FFE9DC; --scrim:rgba(10,23,55,.5); --lock-open:#12326E; --heading:#12326E;
   --font:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  color-scheme:light;
+  /* sempre o visual claro, mesmo com o celular em modo escuro */
+  color-scheme:only light;
 }
-@media (prefers-color-scheme:dark){:root{
-  --navy:#0E2552; --orange:#FF6A1F; --orange-hi:#FF864A; --slate:#9DAFD3;
-  --bg:#0A1430; --surface:#13224A; --ink:#E9EEF8; --muted:#9DAFD3; --line:#22345F; --soft:#1A2B57;
-  --ok:#5ACB8E; --ok-soft:#163A2B; --miss:#F08A7E; --miss-soft:#45201E; --just:#FFC94D; --just-soft:#3E3212;
-  --today-soft:#3A2414; --scrim:rgba(0,0,0,.6); --lock-open:#7FA4F0; --heading:#E9EEF8; color-scheme:dark}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
-html{-webkit-text-size-adjust:100%;background:var(--navy)}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45;min-height:100vh;
   padding-top:env(safe-area-inset-top,0px)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--navy)}
@@ -496,12 +493,12 @@ input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px soli
     if (standalone || store.get("tertulias.installHidden") === "1") return;
     $("installTxt").textContent = text; $("installBtn").hidden = !withButton; $("installBox").hidden = false;
   }
-  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; showInstall("Toque em Instalar para ter o ícone na tela inicial.", true); });
+  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; showInstall("Toque em Instalar. O app aparece junto com os outros aplicativos do celular.", true); });
   $("installBtn").onclick = async () => { if (!deferred) return; deferred.prompt(); const r = await deferred.userChoice.catch(() => null); deferred = null; $("installBox").hidden = true; if (r && r.outcome === "accepted") toast("App instalado!"); };
   $("installX").onclick = () => { $("installBox").hidden = true; store.set("tertulias.installHidden", "1"); };
   window.addEventListener("appinstalled", () => { $("installBox").hidden = true; });
   if (isIOS) showInstall("Toque em Compartilhar (quadrado com seta) e depois em “Adicionar à Tela de Início”.", false);
-  else if (/android/i.test(navigator.userAgent)) setTimeout(() => { if (!deferred) showInstall("No Chrome, toque nos 3 pontinhos ⋮ e depois em “Instalar app” ou “Adicionar à tela inicial”.", false); }, 2500);
+  else if (/android/i.test(navigator.userAgent)) setTimeout(() => { if (!deferred) showInstall("No Chrome, toque nos 3 pontinhos ⋮ e depois em “Instalar app”.", false); }, 2500);
 
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 
