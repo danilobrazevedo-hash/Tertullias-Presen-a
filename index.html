@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tertúlias · Presença</title>
+<meta name="description" content="Registre sua presença nas tertúlias de quinta-feira.">
+<meta name="theme-color" content="#12326E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tertúlias">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<script src="config.js"></script>
+<style>
+/* Cores da Logosofia: marinho #12326E, laranja #E25100 */
+:root{
+  --navy:#12326E; --navy-ink:#FFFFFF; --orange:#E25100; --orange-hi:#FF6A1F; --slate:#596F99;
+  --bg:#F3F4F7; --surface:#FFFFFF; --ink:#152443; --muted:#596F99; --line:#E0E4EC; --soft:#E7E9ED;
+  --ok:#1E7A4C; --ok-soft:#DFF1E7; --miss:#C0392B; --miss-soft:#F8E1DE; --just:#9A6A00; --just-soft:#FFF1CC;
+  --today-soft:#FFE9DC; --scrim:rgba(10,23,55,.5); --lock-open:#12326E; --heading:#12326E;
+  --font:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --navy:#0E2552; --orange:#FF6A1F; --orange-hi:#FF864A; --slate:#9DAFD3;
+  --bg:#0A1430; --surface:#13224A; --ink:#E9EEF8; --muted:#9DAFD3; --line:#22345F; --soft:#1A2B57;
+  --ok:#5ACB8E; --ok-soft:#163A2B; --miss:#F08A7E; --miss-soft:#45201E; --just:#FFC94D; --just-soft:#3E3212;
+  --today-soft:#3A2414; --scrim:rgba(0,0,0,.6); --lock-open:#7FA4F0; --heading:#E9EEF8; color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;background:var(--navy)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45;min-height:100vh;
+  padding-top:env(safe-area-inset-top,0px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--navy)}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.inner{max-width:600px;margin:0 auto}
+/* barra superior */
+.appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--navy);color:var(--navy-ink)}
+.appbar .inner{display:flex;align-items:center;gap:12px;min-height:60px;padding-block:10px}
+.brand{display:flex;flex-direction:column;gap:3px}
+.brand img{display:block;height:28px;width:auto;max-width:42vw}
+.brand small{font-size:.78rem;opacity:.8;letter-spacing:.04em;text-transform:uppercase}
+.me{margin-left:auto;text-align:right;font-size:.85rem;line-height:1.2;min-width:0}
+.me b{display:block;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:44vw}
+.me button{background:none;border:0;color:var(--navy-ink);opacity:.8;text-decoration:underline;text-underline-offset:3px;font:inherit;font-size:.8rem;padding:4px 0;cursor:pointer}
+/* topo */
+.hero{background:var(--navy);color:var(--navy-ink);padding-block:4px 22px}
+.hero h1{margin:0;font-size:1.7rem;font-weight:800;line-height:1.15;text-wrap:balance}
+.hero p{margin:6px 0 0;opacity:.85;font-size:.95rem}
+.progress{display:flex;align-items:center;gap:12px;margin-top:16px;font-size:.92rem}
+.bar{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.2);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--orange-hi);width:0;transition:width .4s}
+.progress b{font-variant-numeric:tabular-nums}
+main .inner{display:flex;flex-direction:column;gap:20px;padding-block:18px calc(40px + env(safe-area-inset-bottom,0px))}
+.notice{padding:12px 14px;border-radius:12px;background:var(--today-soft);font-size:.95rem}
+.notice[data-kind="err"]{background:var(--miss-soft)}
+/* instalar */
+.install{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.install img{width:44px;height:44px;border-radius:10px;flex:none}
+.install .txt{flex:1;min-width:0;font-size:.92rem}
+.install .txt b{display:block;font-size:1rem}
+.install .x{background:none;border:0;color:var(--muted);font-size:1.4rem;line-height:1;padding:6px;cursor:pointer}
+/* anos */
+.years{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.years button{flex:none;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:8px 20px;font:inherit;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;min-height:44px}
+.years button[aria-pressed="true"]{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
+/* calendário */
+.month{display:flex;flex-direction:column;gap:10px}
+.month h2{margin:6px 2px 0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:1.2rem;font-weight:800;color:var(--heading)}
+.month h2 small{font-size:.85rem;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.card.is-today{border:2px solid var(--orange)}
+.tap{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;width:100%;padding:14px;background:none;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer;min-height:72px}
+.tap:active{background:var(--soft)}
+.date{text-align:center;line-height:1}
+.date b{display:block;font-size:1.65rem;font-weight:800;color:var(--heading);font-variant-numeric:tabular-nums}
+.date span{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.info{min-width:0}
+.info .t{font-weight:700;font-size:1.02rem;overflow-wrap:anywhere}
+.info .p{font-size:.88rem;color:var(--muted)}
+.info .hint{font-size:.82rem;color:var(--orange);font-weight:600;margin-top:2px}
+.pill{font-size:.8rem;font-weight:700;padding:5px 10px;border-radius:99px;white-space:nowrap}
+.pill.presente{background:var(--ok-soft);color:var(--ok)}
+.pill.falta{background:var(--miss-soft);color:var(--miss)}
+.pill.justificada{background:var(--just-soft);color:var(--just)}
+.pill.none{background:var(--soft);color:var(--muted)}
+.lock{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:44px;line-height:1}
+.lock small{font-size:.72rem;font-weight:700;font-variant-numeric:tabular-nums}
+.lock.closed{color:var(--orange)}
+.lock.open{color:var(--lock-open)}
+.locked{display:flex;gap:12px;align-items:center;background:var(--bg);border-radius:12px;padding:12px 14px;font-size:.98rem}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+/* boas-vindas */
+.welcome{background:var(--surface);border:2px solid var(--navy);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.welcome .eb{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);font-weight:700}
+.welcome .q{font-size:1.6rem;font-weight:800;line-height:1.15}
+.welcome .who{color:var(--muted)}
+.welcome form{display:flex;flex-direction:column;gap:10px}
+input,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%}
+textarea{resize:vertical;min-height:110px}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 18px;min-height:48px;cursor:pointer;background:var(--orange);color:#fff}
+.btn.navy{background:var(--navy);color:var(--navy-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.55;cursor:default}
+.msg{font-size:.92rem}
+.msg:empty{display:none}
+.msg.err{color:var(--miss)} .msg.ok{color:var(--ok)}
+.row2{display:flex;gap:10px}
+.row2 .btn{flex:1}
+/* folha inferior */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:20;opacity:0;transition:opacity .2s}
+.scrim.on{opacity:1}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--surface);color:var(--ink);border-radius:20px 20px 0 0;
+  padding:10px max(20px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
+  max-height:calc(100% - env(safe-area-inset-top,0px) - 24px);overflow-y:auto;transform:translateY(100%);transition:transform .25s ease-out;box-shadow:0 -8px 30px rgba(10,23,55,.25)}
+.sheet.on{transform:none}
+.grab{width:44px;height:5px;border-radius:99px;background:var(--line);margin:0 auto 14px}
+.sinner{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.when{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);font-weight:700}
+.sheet h3{margin:2px 0 0;font-size:1.45rem;font-weight:800;line-height:1.15;text-wrap:balance}
+.sheet .who{color:var(--muted);font-size:.95rem}
+.ask{font-weight:700;font-size:1.05rem;margin-top:4px}
+.answers{display:flex;flex-direction:column;gap:10px}
+.ans{display:flex;align-items:center;gap:14px;width:100%;min-height:60px;padding:12px 16px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;font-size:1.08rem;text-align:left;cursor:pointer}
+.ans .ic{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;font-weight:800;color:#fff}
+.ans.a-presente .ic{background:var(--ok)} .ans.a-falta .ic{background:var(--miss)} .ans.a-justificada .ic{background:var(--just)}
+.ans small{display:block;font-weight:400;font-size:.85rem;color:var(--muted)}
+.ans[aria-pressed="true"].a-presente{border-color:var(--ok);background:var(--ok-soft)}
+.ans[aria-pressed="true"].a-falta{border-color:var(--miss);background:var(--miss-soft)}
+.ans[aria-pressed="true"].a-justificada{border-color:var(--just);background:var(--just-soft)}
+.ans:disabled{opacity:.6}
+.extra{display:flex;flex-direction:column;gap:10px}
+.extra label{font-weight:700;display:flex;flex-direction:column;gap:6px}
+.motivo{font-size:.95rem;color:var(--muted);background:var(--bg);border-radius:12px;padding:10px 14px;overflow-wrap:anywhere}
+.closebar{display:flex;justify-content:center}
+.linkbtn{background:none;border:0;color:var(--slate);font:inherit;font-size:.9rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:30;background:var(--navy);color:var(--navy-ink);padding:12px 18px;border-radius:12px;font-weight:600;transition:.2s;max-width:calc(100% - 32px);text-align:center;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:480px){.tap{grid-template-columns:46px 1fr auto}.tap>.pill{grid-column:2/4;justify-self:start}}
+@media (min-width:700px){.sheet{left:50%;right:auto;bottom:50%;width:min(520px,92vw);border-radius:20px;transform:translate(-50%,60%);opacity:0;transition:.2s}.sheet.on{transform:translate(-50%,50%);opacity:1}.grab{display:none}}
+@media (prefers-reduced-motion:reduce){.sheet,.scrim,.toast,.bar>i{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="appbar gutter">
+  <div class="inner">
+    <div class="brand"><img src="icons/logo-white.png" alt="Logosofia" width="380" height="94"><small>Tertúlias · Presença</small></div>
+    <div class="me" id="meBox" hidden><b id="meName"></b><button type="button" id="renameBtn">Alterar nome</button></div>
+  </div>
+</header>
+
+<section class="hero gutter">
+  <div class="inner">
+    <h1 id="hello">Sua presença nas tertúlias</h1>
+    <p>Toque na tertúlia do dia e escolha sua resposta. As respostas abrem às 20h15 de cada quinta.</p>
+    <div class="progress" id="progressBox" hidden>
+      <div class="bar"><i id="barFill"></i></div>
+      <span><b id="progN">0</b>/<b id="progD">0</b> presenças em <span id="progY"></span></span>
+    </div>
+  </div>
+</section>
+
+<main class="gutter">
+  <div class="inner">
+    <div class="notice" id="notice" hidden></div>
+    <div class="install" id="installBox" hidden>
+      <img src="icons/icon-192.png" alt="">
+      <div class="txt"><b>Instale o app no celular</b><span id="installTxt"></span></div>
+      <button type="button" class="btn navy" id="installBtn" hidden>Instalar</button>
+      <button type="button" class="x" id="installX" aria-label="Fechar aviso">×</button>
+    </div>
+    <section id="welcomeSlot"></section>
+    <nav class="years" id="years" aria-label="Ano"></nav>
+    <section id="agenda" style="display:flex;flex-direction:column;gap:22px">
+      <div class="empty">Carregando o calendário de tertúlias…</div>
+    </section>
+  </div>
+</main>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  const LATE_DAYS = 7, OPEN_H = 20, OPEN_M = 15, OPEN_TXT = "20h15";
+  const ST = {
+    presente:    { label: "Presente",          btn: "Estive presente",   sub: "Participei da tertúlia",   ic: "✓" },
+    falta:       { label: "Falta",             btn: "Faltei",            sub: "Não pude ir",              ic: "✕" },
+    justificada: { label: "Falta justificada", btn: "Falta justificada", sub: "Não fui e tive um motivo", ic: "!" },
+  };
+  const pad = (n) => String(n).padStart(2, "0");
+  const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const parseKey = (k) => { const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d); };
+  const todayKey = () => keyOf(new Date());
+  const addDays = (k, n) => { const d = parseKey(k); d.setDate(d.getDate() + n); return keyOf(d); };
+  const longDate = (k) => { const d = parseKey(k); return `Quinta, ${d.getDate()} de ${MESES[d.getMonth()]}`; };
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (_) {} },
+    json(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (_) { return null; } },
+  };
+  const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+
+  // ---------- servidor (Planilha Google) ou demonstração ----------
+  const API = (window.TERTULIAS_API || "").trim();
+  const DEMO = !/^https:\/\/script\.google\.com\//.test(API);
+  const api = DEMO ? demoApi() : {
+    async dados(id) { const r = await fetch(`${API}?action=dados&id=${encodeURIComponent(id)}&t=${Date.now()}`); return check(await r.json()); },
+    async post(body) { const r = await fetch(API, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) }); return check(await r.json()); },
+  };
+  function check(j) { if (!j || j.erro) throw new Error((j && j.erro) || "Resposta inválida do servidor."); return j; }
+
+  function demoApi() {
+    const K = "tertulias.demo";
+    const db = store.json(K) || { pessoas: {}, respostas: {} };
+    const save = () => store.set(K, JSON.stringify(db));
+    const lista = [];
+    const d = new Date(2026, 10, 26);
+    while (d.getFullYear() <= 2027) { lista.push({ data: keyOf(d), tema: "Tema a definir", quem: "", temCodigo: false, liberada: keyOf(d) === "2026-11-26" }); d.setDate(d.getDate() + 7); }
+    return {
+      async dados(id) { return { ok: true, tertulias: lista, respostas: db.respostas[id] || {}, nome: db.pessoas[id] || "" }; },
+      async post(b) {
+        if (b.action === "nome") { db.pessoas[b.id] = b.nome; save(); return { ok: true, id: b.id, nome: b.nome }; }
+        if (b.action === "responder") {
+          const t = lista.find(x => x.data === b.data); if (!t || !isOpen(t)) throw new Error("Esta tertúlia não está aberta para respostas.");
+          (db.respostas[b.id] = db.respostas[b.id] || {})[b.data] = { status: b.status, motivo: b.motivo || "", em: new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) };
+          save(); return { ok: true };
+        }
+      },
+    };
+  }
+
+  // ---------- estado ----------
+  const cache = store.json("tertulias.cache") || {};
+  const S = {
+    id: store.get("tertulias.id") || uuid(),
+    nome: store.get("tertulias.nome") || "",
+    tert: cache.tertulias || [], resp: cache.respostas || {},
+    loaded: !!cache.tertulias, synced: false, renaming: false,
+    year: new Date().getFullYear(), scrolled: false, sheetDay: null, lastFocus: null,
+  };
+  store.set("tertulias.id", S.id);
+
+  function notice(text, kind) { const n = $("notice"); n.hidden = !text; n.textContent = text || ""; n.dataset.kind = kind || ""; }
+  let toastT; function toast(text) { const t = $("toast"); t.textContent = text; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2600); }
+  const tOf = (x) => typeof x === "string" ? S.tert.find(t => t.data === x) : x;
+  const opensAt = (day) => { const d = parseKey(day); d.setHours(OPEN_H, OPEN_M, 0, 0); return d; };
+  function isOpen(x) { const t = tOf(x); if (!t) return false; if (t.liberada) return true; return new Date() >= opensAt(t.data) && t.data >= addDays(todayKey(), -LATE_DAYS); }
+  function notYet(x) { const t = tOf(x); return !!t && !t.liberada && new Date() < opensAt(t.data); }
+  const myAnswer = (day) => S.resp[day] || null;
+
+  async function sync() {
+    try {
+      const j = await api.dados(S.id);
+      S.tert = j.tertulias || []; S.resp = j.respostas || {};
+      if (j.nome) { S.nome = j.nome; store.set("tertulias.nome", j.nome); }
+      else if (S.nome) { try { const r = await api.post({ action: "nome", id: S.id, nome: S.nome }); adoptId(r); } catch (_) {} }
+      S.loaded = true; S.synced = true;
+      store.set("tertulias.cache", JSON.stringify({ tertulias: S.tert, respostas: S.resp }));
+      if ($("notice").dataset.kind === "err") notice("");
+      render();
+    } catch (e) {
+      S.loaded = true;
+      notice(S.tert.length ? "Sem conexão agora. Mostrando os dados salvos neste celular." : "Não foi possível carregar o calendário. Verifique sua internet e abra o app de novo.", "err");
+      render();
+    }
+  }
+  function adoptId(r) {
+    if (r && r.id && r.id !== S.id) { S.id = r.id; store.set("tertulias.id", S.id); }
+    if (r && r.nome) { S.nome = r.nome; store.set("tertulias.nome", r.nome); }
+  }
+
+  // ---------- lista ----------
+  const LOCK_SVG = (open) => `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5" fill="currentColor" fill-opacity=".14"/>${open ? '<path d="M8 10.5V7.5a4 4 0 0 1 7.7-1.5"/>' : '<path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>'}<circle cx="12" cy="15.6" r="1.3" fill="currentColor" stroke="none"/></svg>`;
+  function lockBadge(open, caption) { const b = el("span", "lock " + (open ? "open" : "closed")); b.innerHTML = LOCK_SVG(open); if (caption) b.append(el("small", null, caption)); return b; }
+
+  function render() {
+    const tk = todayKey();
+    const needsName = !S.nome || S.renaming;
+    $("hello").textContent = S.nome ? `Olá, ${S.nome.split(" ")[0]}!` : "Sua presença nas tertúlias";
+    $("meBox").hidden = !S.nome || S.renaming;
+    $("meName").textContent = S.nome;
+
+    const ws = $("welcomeSlot");
+    if (needsName) { if (!ws.firstChild) ws.append(welcomeCard()); } else ws.replaceChildren();
+
+    const years = [...new Set(S.tert.map(t => +t.data.slice(0,4)))].sort();
+    if (years.length && !years.includes(S.year)) S.year = years.find(y => y >= new Date().getFullYear()) || years[years.length - 1];
+    const yb = $("years"); yb.replaceChildren(); yb.hidden = years.length < 2;
+    for (const y of years) { const b = el("button", null, String(y)); b.type = "button"; b.setAttribute("aria-pressed", String(y === S.year)); b.onclick = () => { S.year = y; render(); }; yb.append(b); }
+
+    const done = S.tert.filter(t => t.data.startsWith(S.year + "-") && t.data <= tk);
+    const present = done.filter(t => (myAnswer(t.data) || {}).status === "presente").length;
+    $("progressBox").hidden = !S.nome || done.length === 0;
+    $("progN").textContent = present; $("progD").textContent = done.length; $("progY").textContent = S.year;
+    $("barFill").style.width = done.length ? (present / done.length * 100) + "%" : "0";
+
+    const ag = $("agenda"); ag.replaceChildren();
+    if (!S.loaded) { ag.append(el("div", "empty", "Carregando o calendário de tertúlias…")); return; }
+    const list = S.tert.filter(t => t.data.startsWith(S.year + "-"));
+    if (!list.length) { ag.append(el("div", "empty", "O calendário de tertúlias ainda não foi publicado pela organização.")); return; }
+    const groups = new Map();
+    for (const t of list) { const k = t.data.slice(0,7); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(t); }
+    for (const [ym, items] of groups) {
+      const m = +ym.slice(5);
+      const sec = el("section", "month"); sec.id = "m-" + ym;
+      const h = el("h2"); h.append(document.createTextNode(MESES[m-1][0].toUpperCase() + MESES[m-1].slice(1)));
+      const past = items.filter(t => t.data <= tk);
+      if (S.nome && past.length) h.append(el("small", null, `${past.filter(t => (myAnswer(t.data) || {}).status === "presente").length}/${past.length} presenças`));
+      sec.append(h);
+      for (const t of items) sec.append(cardFor(t, tk));
+      ag.append(sec);
+    }
+    if (!S.scrolled && S.synced) {
+      S.scrolled = true;
+      const target = document.getElementById("m-" + tk.slice(0,7));
+      if (target && tk.slice(0,7) !== list[0].data.slice(0,7)) requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
+    }
+  }
+
+  function cardFor(t, tk) {
+    const d = parseKey(t.data);
+    const ans = myAnswer(t.data);
+    const open = isOpen(t);
+    const card = el("div", "card" + (t.data === tk ? " is-today" : ""));
+    const tap = el("button", "tap"); tap.type = "button";
+    tap.setAttribute("aria-label", `${longDate(t.data)}: ${t.tema}. ${ans ? ST[ans.status].label : open ? "Aberta, toque para responder" : notYet(t) ? "Fechada, abre às " + OPEN_TXT + " do dia" : "Sem resposta"}`);
+    const date = el("div", "date"); date.append(el("b", null, d.getDate()), el("span", null, MESES[d.getMonth()].slice(0,3)));
+    const info = el("div", "info"); info.append(el("div", "t", t.tema || "Tema a definir"));
+    if (t.quem) info.append(el("div", "p", "com " + t.quem));
+    if (open && !ans) info.append(el("div", "hint", "Toque para responder"));
+    tap.append(date, info);
+    if (ans) tap.append(el("span", "pill " + ans.status, ST[ans.status].label));
+    else if (open) tap.append(lockBadge(true, "Aberta"));
+    else if (notYet(t)) tap.append(lockBadge(false, t.data === tk ? OPEN_TXT : ""));
+    else tap.append(el("span", "pill none", "Sem resposta"));
+    tap.onclick = () => openSheet(t.data, tap);
+    card.append(tap);
+    return card;
+  }
+
+  // ---------- folha de resposta ----------
+  function openSheet(day, from) {
+    if (!S.nome) { $("welcomeSlot").scrollIntoView({ block: "start", behavior: "smooth" }); const i = $("nameIn"); if (i) i.focus(); return; }
+    S.sheetDay = day; S.lastFocus = from || null;
+    buildSheet(null);
+    const sc = $("scrim"), sh = $("sheet");
+    sc.hidden = false; sh.hidden = false;
+    requestAnimationFrame(() => { sc.classList.add("on"); sh.classList.add("on"); });
+    document.documentElement.style.overflow = "hidden";
+    setTimeout(() => { const f = sh.querySelector(".ans"); if (f) f.focus({ preventScroll: true }); }, 60);
+  }
+  function closeSheet() {
+    if (!S.sheetDay) return;
+    S.sheetDay = null;
+    const sc = $("scrim"), sh = $("sheet");
+    sc.classList.remove("on"); sh.classList.remove("on");
+    document.documentElement.style.overflow = "";
+    setTimeout(() => { if (!S.sheetDay) { sc.hidden = true; sh.hidden = true; sh.replaceChildren(); } }, 260);
+    if (S.lastFocus && document.contains(S.lastFocus)) S.lastFocus.focus({ preventScroll: true });
+  }
+  $("scrim").onclick = closeSheet;
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+
+  function buildSheet(mode) {
+    const day = S.sheetDay; const t = tOf(day); if (!t) { closeSheet(); return; }
+    const ans = myAnswer(day); const open = isOpen(t); const tk = todayKey();
+    const sh = $("sheet"); sh.replaceChildren();
+    const inner = el("div", "sinner");
+    sh.append(el("div", "grab"), inner);
+    const head = el("div");
+    head.append(el("div", "when", day === tk ? "Hoje · " + longDate(day) : longDate(day)));
+    const h = el("h3", null, t.tema || "Tema a definir"); h.id = "sheetTitle"; head.append(h);
+    if (t.quem) head.append(el("div", "who", "com " + t.quem));
+    inner.append(head);
+    const status = el("div", "msg");
+
+    if (!open) {
+      if (ans) { inner.append(el("div", "ask", "Sua resposta")); const p = el("div"); p.append(el("span", "pill " + ans.status, ST[ans.status].label)); inner.append(p); if (ans.motivo) inner.append(el("div", "motivo", "Motivo: " + ans.motivo)); }
+      if (notYet(t)) {
+        const box = el("div", "locked"); box.append(lockBadge(false));
+        box.append(el("div", null, day === tk ? `As respostas abrem hoje às ${OPEN_TXT}. A tertúlia começa às 20h30.` : `As respostas abrem às ${OPEN_TXT} de ${longDate(day).toLowerCase()}.`));
+        inner.append(box);
+      } else inner.append(el("div", "who", "O prazo para responder esta tertúlia terminou."));
+    } else if (mode) {
+      inner.append(extraForm(t, mode, status));
+    } else {
+      inner.append(el("div", "ask", "Você esteve nesta tertúlia?"));
+      const box = el("div", "answers"); box.setAttribute("role", "group"); box.setAttribute("aria-label", "Sua resposta");
+      for (const s of ["presente", "falta", "justificada"]) {
+        const b = el("button", "ans a-" + s); b.type = "button"; b.setAttribute("aria-pressed", String(!!ans && ans.status === s));
+        const txt = el("span"); txt.append(document.createTextNode(ST[s].btn), el("small", null, ST[s].sub));
+        b.append(el("span", "ic", ST[s].ic), txt);
+        b.onclick = () => choose(t, s, box, status);
+        box.append(b);
+      }
+      inner.append(box);
+      if (ans) { inner.append(el("div", "msg ok", `Resposta salva${ans.em ? " em " + ans.em : ""}. Toque em outra opção para mudar.`)); if (ans.motivo) inner.append(el("div", "motivo", "Motivo: " + ans.motivo)); }
+    }
+    inner.append(status);
+    const cb = el("div", "closebar"); const c = el("button", "linkbtn", "Fechar"); c.type = "button"; c.onclick = closeSheet; cb.append(c); inner.append(cb);
+  }
+
+  async function choose(t, s, box, status) {
+    status.className = "msg"; status.textContent = "";
+    const ans = myAnswer(t.data);
+    if (s === "justificada") { buildSheet("justificada"); return; }
+    if (s === "presente" && t.temCodigo && !(ans && ans.status === "presente")) { buildSheet("presente"); return; }
+    if (ans && ans.status === s) { closeSheet(); return; }
+    for (const b of box.children) b.disabled = true;
+    status.textContent = "Enviando…";
+    try { await send(t.data, s, "", ""); closeSheet(); toast(s === "presente" ? "Presença registrada. Obrigado!" : "Falta registrada."); }
+    catch (e) { for (const b of box.children) b.disabled = false; status.className = "msg err"; status.textContent = e.message; }
+  }
+
+  function extraForm(t, s, status) {
+    const f = el("form", "extra");
+    const lab = el("label", null, s === "justificada" ? "Por que você faltou?" : "Palavra-chave mostrada no encontro");
+    const inp = s === "justificada" ? el("textarea") : el("input");
+    inp.id = "x-" + t.data;
+    if (s === "justificada") { inp.maxLength = 500; inp.placeholder = "Ex.: consulta médica, viagem a trabalho, doença na família…"; inp.value = (myAnswer(t.data) || {}).motivo || ""; }
+    else { inp.autocomplete = "off"; inp.setAttribute("autocapitalize", "characters"); }
+    lab.append(inp); f.append(lab);
+    const act = el("div", "row2");
+    const back = el("button", "btn ghost", "Voltar"); back.type = "button"; back.onclick = () => buildSheet(null);
+    const sendBtn = el("button", "btn", s === "justificada" ? "Enviar justificativa" : "Confirmar presença"); sendBtn.type = "submit";
+    act.append(back, sendBtn); f.append(act);
+    f.onsubmit = async (ev) => {
+      ev.preventDefault(); status.className = "msg"; status.textContent = "";
+      const v = inp.value.trim();
+      if (s === "justificada" && v.length < 3) { status.className = "msg err"; status.textContent = "Escreva o motivo da falta para enviar a justificativa."; inp.focus(); return; }
+      if (s === "presente" && !v) { status.className = "msg err"; status.textContent = "Digite a palavra-chave que o organizador mostrou no encontro."; inp.focus(); return; }
+      sendBtn.disabled = true; sendBtn.textContent = "Enviando…";
+      try { await send(t.data, s, s === "justificada" ? v : "", s === "presente" ? v : ""); closeSheet(); toast(s === "justificada" ? "Justificativa enviada." : "Presença registrada. Obrigado!"); }
+      catch (e) { sendBtn.disabled = false; sendBtn.textContent = "Tentar de novo"; status.className = "msg err"; status.textContent = e.message; }
+    };
+    setTimeout(() => inp.focus(), 80);
+    return f;
+  }
+
+  async function send(day, status, motivo, codigo) {
+    if (!isOpen(day)) throw new Error(notYet(day) ? `As respostas abrem às ${OPEN_TXT} do dia da tertúlia.` : "O prazo para responder esta tertúlia terminou.");
+    try { await api.post({ action: "responder", id: S.id, data: day, status, motivo, codigo }); }
+    catch (e) { if (e instanceof TypeError) throw new Error("Sem conexão. Verifique sua internet e tente de novo."); throw e; }
+    S.resp[day] = { status, motivo, em: new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) };
+    render(); sync();
+  }
+
+  // ---------- nome ----------
+  function welcomeCard() {
+    const first = !S.nome;
+    const card = el("div", "welcome");
+    card.append(el("div", "eb", first ? "Bem-vindo(a)" : "Alterar nome"),
+                el("div", "q", first ? "Qual é o seu nome completo?" : "Qual nome devemos usar?"),
+                el("div", "who", first ? "Digite nome e sobrenome. Ele fica registrado e, nas próximas vezes, você já entra direto." : "O novo nome vale para todas as suas respostas."));
+    const f = el("form");
+    const inp = el("input"); inp.id = "nameIn"; inp.placeholder = "Nome e sobrenome"; inp.autocomplete = "name"; inp.maxLength = 80;
+    inp.setAttribute("autocapitalize", "words"); inp.setAttribute("aria-label", "Nome e sobrenome"); inp.value = S.nome;
+    const act = el("div", "row2");
+    if (!first) { const c = el("button", "btn ghost", "Cancelar"); c.type = "button"; c.onclick = () => { S.renaming = false; render(); }; act.append(c); }
+    const b = el("button", "btn", first ? "Começar" : "Salvar"); b.type = "submit"; act.append(b);
+    f.append(inp, act);
+    const msg = el("div", "msg");
+    f.onsubmit = async (ev) => {
+      ev.preventDefault();
+      const v = inp.value.replace(/\s+/g, " ").trim();
+      if (v.split(" ").filter(p => p.length >= 2).length < 2) { msg.className = "msg err"; msg.textContent = "Digite seu nome e sobrenome, por exemplo: Maria Souza."; inp.focus(); return; }
+      b.disabled = true; b.textContent = "Salvando…";
+      try {
+        const r = await api.post({ action: "nome", id: S.id, nome: v, renomear: !first });
+        adoptId(r); S.renaming = false; $("welcomeSlot").replaceChildren(); render(); sync();
+        toast(first ? `Bem-vindo(a), ${S.nome.split(" ")[0]}!` : "Nome atualizado.");
+      } catch (e) { b.disabled = false; b.textContent = first ? "Começar" : "Salvar"; msg.className = "msg err"; msg.textContent = e instanceof TypeError ? "Sem conexão. Verifique sua internet e tente de novo." : e.message; }
+    };
+    card.append(f, msg);
+    return card;
+  }
+  $("renameBtn").onclick = () => { S.renaming = true; $("welcomeSlot").replaceChildren(); render(); window.scrollTo({ top: 0, behavior: "smooth" }); setTimeout(() => { const i = $("nameIn"); if (i) i.focus(); }, 50); };
+
+  // ---------- instalar no celular ----------
+  const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  let deferred = null;
+  function showInstall(text, withButton) {
+    if (standalone || store.get("tertulias.installHidden") === "1") return;
+    $("installTxt").textContent = text; $("installBtn").hidden = !withButton; $("installBox").hidden = false;
+  }
+  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; showInstall("Toque em Instalar para ter o ícone na tela inicial.", true); });
+  $("installBtn").onclick = async () => { if (!deferred) return; deferred.prompt(); const r = await deferred.userChoice.catch(() => null); deferred = null; $("installBox").hidden = true; if (r && r.outcome === "accepted") toast("App instalado!"); };
+  $("installX").onclick = () => { $("installBox").hidden = true; store.set("tertulias.installHidden", "1"); };
+  window.addEventListener("appinstalled", () => { $("installBox").hidden = true; });
+  if (isIOS) showInstall("Toque em Compartilhar (quadrado com seta) e depois em “Adicionar à Tela de Início”.", false);
+  else if (/android/i.test(navigator.userAgent)) setTimeout(() => { if (!deferred) showInstall("No Chrome, toque nos 3 pontinhos ⋮ e depois em “Instalar app” ou “Adicionar à tela inicial”.", false); }, 2500);
+
+  if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+
+  // ---------- início ----------
+  if (DEMO) notice("Modo demonstração: as respostas ficam salvas só neste aparelho. Configure a planilha para valer de verdade.");
+  render();
+  sync();
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") sync(); });
+  const openSig = () => S.tert.map(t => isOpen(t) ? 1 : 0).join("") + todayKey();
+  let last = openSig(); setInterval(() => { const s = openSig(); if (s !== last) { last = s; render(); } }, 30000);
+})();
+</script>
+</body>
+</html>
